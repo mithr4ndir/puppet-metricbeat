@@ -1,0 +1,13 @@
+---
+metricbeat::config_dir: "C:\\Program Files\\Metricbeat"
+metricbeat::download_url: "https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-%{lookup('metricbeat::package_ensure')}-windows-x86_64.zip"
+metricbeat::install_dir: "C:\\Program Files"
+metricbeat::logging:
+  files:
+    path: "C:\\Program Files\\Metricbeat\\logs"
+  to_eventlog: false
+metricbeat::metricbeat_path: "C:\\Program Files\\Metricbeat\\metricbeat.exe"
+metricbeat::modules:
+  windows: 'enabled'
+metricbeat::package_ensure: '7.9.3'
+metricbeat::tmp_dir: 'C:/Windows/Temp'

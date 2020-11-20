@@ -1,0 +1,12 @@
+---
+metricbeat::config_dir: '/etc/metricbeat'
+metricbeat::logging:
+  files:
+    path: '/var/log/metricbeat'
+  to_syslog: false
+metricbeat::metricbeat_path: '/usr/share/metricbeat/bin/metricbeat'
+metricbeat::modules:
+  system: 'enabled'
+metricbeat::owner: 'root'
+metricbeat::group: 'root'
+metricbeat::tmp_dir: '/tmp'

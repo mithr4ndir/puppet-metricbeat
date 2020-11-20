@@ -1,0 +1,25 @@
+---
+ensure: 'present'
+metricbeat::logging:
+  level: 'info'
+  files:
+    keepfiles: 7
+    name: 'metricbeat'
+    rotateeverybytes: '10485760'
+  metrics:
+    enabled: true
+    period: '30s'
+  selectors: undef
+  to_files: true
+metricbeat::queue:
+  mem:
+    events: 4096
+    flush:
+      min_events: 0
+      timeout: '0s'
+
+lookup_options:
+  metricbeat::logging:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true

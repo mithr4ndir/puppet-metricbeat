@@ -1,16 +1,14 @@
-# This file can be used to install module depdencies for unit testing
+# This file can be used to install module dependencies for unit testing
 # See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
 ---
 fixtures:
+  forge_modules:
+    stdlib: "puppetlabs/stdlib"
+    yumrepo_core: "puppetlabs/yumrepo_core"
+    apt: "puppetlabs/apt"
+    archive: "puppet/archive"
+    powershell: "puppetlabs/powershell"
   repositories:
-    yumrepo_core:
-      repo: "https://github.com/puppetlabs/puppetlabs-yumrepo_core.git"
-      puppet_version: ">= 6.0.0"
-    apt: "https://github.com/puppetlabs/puppetlabs-apt.git"
-    archive: "https://github.com/voxpupuli/puppet-archive.git"
-    powershell: "https://github.com/puppetlabs/puppetlabs-powershell.git"
     pwshlib: "https://github.com/puppetlabs/ruby-pwsh.git"
-    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
-    zypprepo: "https://github.com/voxpupuli/puppet-zypprepo.git"
   symlinks:
     metricbeat: "#{source_dir}"

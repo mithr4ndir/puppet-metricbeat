@@ -4,37 +4,44 @@
 # Manages the state of Service['metricbeat']
 #
 # @summary Manages the state of Service['metricbeat']
-class metricbeat::service inherits metricbeat {
+class metricbeat::service (
+  $service_ensure         = $metricbeat::service_ensure,
+) {
+  # The base class must be included first because parameter defaults depend on it
+  if ! defined(Class['metricbeat']) {
+    fail('You must include the metricbeat class before using any metricbeat defined resources')
+  }
   if $metricbeat::ensure == 'present' {
-    case $metricbeat::service_ensure {
+    case $service_ensure {
       'enabled': {
-        $service_ensure = 'running'
-        $service_enable = true
+        $ensure = 'running'
+        $enable = true
       }
       'disabled': {
-        $service_ensure = 'stopped'
-        $service_enable = false
+        $ensure = 'stopped'
+        $enable = false
       }
       'running': {
-        $service_ensure = 'running'
-        $service_enable = false
+        $ensure = 'running'
+        $enable = false
       }
       'unmanaged': {
-        $service_ensure = undef
-        $service_enable = false
+        $ensure = undef
+        $enable = false
       }
       default: {
+        $ensure = 'running'
+        $enable = true
       }
     }
   }
   else {
-    $service_ensure = 'stopped'
-    $service_enable = false
+    $ensure = 'stopped'
+    $enable = false
   }
 
   service{'metricbeat':
-    ensure     => $service_ensure,
-    enable     => $service_enable,
-    hasrestart => $metricbeat::service_has_restart,
+    ensure => $ensure,
+    enable => $enable,
   }
 }
