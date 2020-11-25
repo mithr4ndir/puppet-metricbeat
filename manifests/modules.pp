@@ -26,7 +26,6 @@ class metricbeat::modules (
   }
 
   if $custom_modules {
-    notify { "customs are ${custom_modules}":}
     $custom_modules.each | $custom | {
       # ensure period is defined for entry entry as it is required.
       $config = $custom[1].map | $h | { $h['period'] }
