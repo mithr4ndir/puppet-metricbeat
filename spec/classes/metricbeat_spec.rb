@@ -12,51 +12,8 @@ describe 'metricbeat' do
 
       it { is_expected.to contain_class('metricbeat::install') }
       it { is_expected.to contain_class('metricbeat::config') }
-      it { is_expected.to contain_class('metricbeat::modules') }
       it { is_expected.to contain_class('metricbeat::repo') }
       it { is_expected.to contain_class('metricbeat::service') }
-
-      describe 'metricbeat::modules' do
-        if os_facts[:kernel] == 'windows'
-          context 'with modules = windows do'
-          let(:params) { { 'modules' => { 'windows' => 'enabled' } } }
-          it {
-            expect(subject).to contain_exec('enable windows').with(
-              command: 'C:\\Program Files\\Metricbeat\\metricbeat.exe modules enable windows'
-            )
-          }
-        else
-          context 'with system module enabled' do
-            let(:params) { { 'modules' => { 'system' => 'enabled', 'nginx' => 'disabled' } } }
-
-            it {
-              expect(subject).to contain_exec('enable system').with(
-                command: '/usr/share/metricbeat/bin/metricbeat modules enable system'
-              )
-            }
-          end
-
-          context 'with system module disabled' do
-            let(:params) { { 'modules' => { 'system' => 'disabled' } } }
-
-            it {
-              expect(subject).to contain_exec('disable system').with(
-                command: '/usr/share/metricbeat/bin/metricbeat modules disable system'
-              )
-            }
-          end
-
-          context 'with custom module configurations' do
-            let(:params) { { 'custom_modules' => { 'system' => [{ 'module' => 'system', 'metricsets' => ['one', 'two'], 'period' => '10s' }] } } }
-
-            it {
-              expect(subject).to contain_file('system.yml').with(
-                content: %r{- module: system}
-              )
-            }
-          end
-        end
-      end
 
       describe 'metricbeat::config' do
         if os_facts[:kernel] == 'windows'
@@ -301,8 +258,8 @@ describe 'metricbeat' do
           )
         }
 
-        it { is_expected.to contain_class('metricbeat::config').that_comes_before('Class[metricbeat::modules]') }
-        it { is_expected.to contain_class('metricbeat::install').that_comes_before('Class[metricbeat::config]').that_comes_before('Class[metricbeat::modules]').that_notifies('Class[metricbeat::service]') }
+        it { is_expected.to contain_class('metricbeat::config') }
+        it { is_expected.to contain_class('metricbeat::install').that_comes_before('Class[metricbeat::config]').that_notifies('Class[metricbeat::service]') }
         it { is_expected.to contain_class('metricbeat::repo').that_comes_before('Class[metricbeat::install]') }
         it { is_expected.to contain_class('metricbeat::service') }
       end
@@ -315,8 +272,8 @@ describe 'metricbeat' do
         end
 
         it { is_expected.to compile }
-        it { is_expected.to contain_class('metricbeat::config').that_comes_before('Class[metricbeat::modules]') }
-        it { is_expected.to contain_class('metricbeat::install').that_comes_before('Class[metricbeat::config]').that_comes_before('Class[metricbeat::modules]').that_notifies('Class[metricbeat::service]') }
+        it { is_expected.to contain_class('metricbeat::config') }
+        it { is_expected.to contain_class('metricbeat::install').that_comes_before('Class[metricbeat::config]').that_notifies('Class[metricbeat::service]') }
         it { is_expected.not_to contain_class('metricbeat::repo') }
         it { is_expected.to contain_class('metricbeat::service') }
       end
@@ -330,7 +287,6 @@ describe 'metricbeat' do
 
         it { is_expected.to compile }
         it { is_expected.to contain_class('metricbeat::config') }
-        it { is_expected.to contain_class('metricbeat::modules') }
         it { is_expected.to contain_class('metricbeat::install') }
         it { is_expected.to contain_class('metricbeat::repo').that_comes_before('Class[metricbeat::install]') }
         it { is_expected.to contain_class('metricbeat::service').that_comes_before('Class[metricbeat::install]') }

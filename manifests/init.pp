@@ -154,7 +154,7 @@ class metricbeat (
   String $metricbeat_path,
   Hash $queue,
   String $tmp_dir,
-  Hash $outputs                                                        = {'elasticsearch' => {'hosts' => ['http://localhost:9200']}},
+  Hash $outputs                                                       = {'elasticsearch' => {'hosts' => ['http://localhost:9200']}},
   String $beat_name                                                   = $facts['hostname'],
   Pattern[/^0[0-7]{3}$/] $config_mode                                 = '0644',
   Boolean $disable_configtest                                         = false,
@@ -165,7 +165,7 @@ class metricbeat (
   Integer $queue_size                                                 = 1000,
   Enum['enabled', 'disabled', 'running', 'unmanaged'] $service_ensure = 'enabled',
   Optional[Hash] $modules                                             = undef,
-  Optional[Hash] $custom_modules                               = undef,
+  Optional[Hash] $custom_modules                                      = undef,
   Optional[Boolean] $reload                                           = undef,
   Optional[Array[Hash]] $autodiscover                                 = undef,
   Optional[Array[Hash]] $setup                                        = undef,
@@ -198,7 +198,6 @@ class metricbeat (
     Anchor['metricbeat::begin']
     -> Class['metricbeat::install']
     -> Class['metricbeat::config']
-    -> Class['metricbeat::modules']
     ~> Class['metricbeat::service']
 
     Class['metricbeat::install']
@@ -212,7 +211,6 @@ class metricbeat (
 
   anchor{'metricbeat::begin':}
   class{'metricbeat::config':}
-  class{'metricbeat::modules':}
   class{'metricbeat::install':}
   class{'metricbeat::service':}
 

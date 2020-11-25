@@ -4,7 +4,7 @@
 #
 # @example
 #   include metricbeat::modules
-class metricbeat::modules (
+define metricbeat::modules (
   $modules = $metricbeat::modules,
   $custom_modules = $metricbeat::custom_modules
 ){
