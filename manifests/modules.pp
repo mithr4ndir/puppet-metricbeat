@@ -9,7 +9,6 @@ class metricbeat::modules (
   $custom_modules = $metricbeat::custom_modules
 ){
   if $modules {
-    notify {"modules are ${modules}":}
     $modules.each | $module | {
       if $module[1] == 'disabled' {
         $status = 'disable'
