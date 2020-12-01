@@ -17,10 +17,12 @@ define metricbeat::modules (
         $status = 'enable'
         $extension = undef
       }
-      exec { "${status} ${module[0]}":
-        command => "${metricbeat::metricbeat_path} modules ${status} ${module[0]}",
-        cwd     => $metricbeat::config_dir,
-        creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
+      if ! defined(Exec["${status} ${module[0]}"]) {
+        exec { "${status} ${module[0]}":
+          command => "${metricbeat::metricbeat_path} modules ${status} ${module[0]}",
+          cwd     => $metricbeat::config_dir,
+          creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
+        }
       }
     }
   }
