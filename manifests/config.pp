@@ -75,7 +75,7 @@ class metricbeat::config {
 
   $validate_cmd    = $metricbeat::disable_configtest ? {
     true    => undef,
-    default => "${q}${metricbeat::metricbeat_path}${q} -c ${q}${metricbeat::config_dir}${slash}${q}/metricbeat.yml test config",
+    default => "${q}${metricbeat::metricbeat_path}${q} -c ${q}${metricbeat::config_dir}${slash}metricbeat.yml${q} test config",
   }
 
   file{'metricbeat.yml':
