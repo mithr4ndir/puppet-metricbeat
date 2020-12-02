@@ -60,7 +60,7 @@ class metricbeat::config {
   case $::kernel {
     'Linux': {
       $q = undef
-      $slash = undef
+      $slash = '/'
     }
     'Windows': {
       $cmd_install_dir = regsubst($metricbeat::install_dir, '/', '\\', 'G')
