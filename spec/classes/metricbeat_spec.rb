@@ -135,29 +135,29 @@ describe 'metricbeat' do
         if os_facts[:kernel] == 'windows'
           it do
             expect(subject).to contain_archive('C:/Windows/Temp/metricbeat-7.9.3-windows-x86_64.zip').with(
-              creates: 'C:\\Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
+              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
               source: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.9.3-windows-x86_64.zip'
             )
             expect(subject).to contain_exec('unzip metricbeat-7.9.3-windows-x86_64').with(
-              command: "\$sh=New-Object -COM Shell.Application;\$sh.namespace((Convert-Path 'C:\\Program Files')).Copyhere(\$sh.namespace((Convert-Path 'C:/Windows/Temp/metricbeat-7.9.3-windows-x86_64.zip')).items(), 16)", # rubocop:disable Layout/LineLength
-              creates: 'C:\Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64'
+              command: "\$sh=New-Object -COM Shell.Application;\$sh.namespace((Convert-Path 'C:/Program Files')).Copyhere(\$sh.namespace((Convert-Path 'C:/Windows/Temp/metricbeat-7.9.3-windows-x86_64.zip')).items(), 16)", # rubocop:disable Layout/LineLength
+              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64'
             )
             expect(subject).to contain_exec('stop service metricbeat-7.9.3-windows-x86_64').with(
-              creates: 'C:\Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
+              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
               command: 'Set-Service -Name metricbeat -Status Stopped',
               onlyif: 'if(Get-WmiObject -Class Win32_Service -Filter "Name=\'metricbeat\'") {exit 0} else {exit 1}'
             )
             expect(subject).to contain_exec('rename metricbeat-7.9.3-windows-x86_64').with(
-              creates: 'C:\Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
-              command: "Remove-Item 'C:\\Program Files/Metricbeat' -Recurse -Force -ErrorAction SilentlyContinue;Rename-Item 'C:\\Program Files/metricbeat-7.9.3-windows-x86_64' 'C:\\Program Files/Metricbeat'" # rubocop:disable Layout/LineLength
+              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
+              command: "Remove-Item 'C:/Program Files/Metricbeat' -Recurse -Force -ErrorAction SilentlyContinue;Rename-Item 'C:/Program Files/metricbeat-7.9.3-windows-x86_64' 'C:/Program Files/Metricbeat'" # rubocop:disable Layout/LineLength
             )
             expect(subject).to contain_exec('mark metricbeat-7.9.3-windows-x86_64').with(
-              creates: 'C:\Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
-              command: "New-Item 'C:\\Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64' -ItemType file"
+              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
+              command: "New-Item 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64' -ItemType file"
             )
             expect(subject).to contain_exec('install metricbeat-7.9.3-windows-x86_64').with(
               command: './install-service-metricbeat.ps1',
-              cwd: 'C:\Program Files/Metricbeat',
+              cwd: 'C:/Program Files/Metricbeat',
               refreshonly: true
             )
           end
@@ -170,6 +170,19 @@ describe 'metricbeat' do
 
           if os_facts[:kernel] != 'windows'
             it { is_expected.to contain_package('metricbeat').with(ensure: 'absent') }
+          end
+        end
+
+        describe 'with windows package_ensure to a specific version' do
+          let(:params) { { 'package_ensure' => '6.8.3' } }
+
+          if os_facts[:kernel] == 'windows'
+            it do
+              expect(subject).to contain_archive('C:/Windows/Temp/metricbeat-6.8.3-windows-x86_64.zip').with(
+                creates: 'C:/Program Files/Metricbeat/metricbeat-6.8.3-windows-x86_64',
+                source: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.8.3-windows-x86_64.zip'
+              )
+            end
           end
         end
 

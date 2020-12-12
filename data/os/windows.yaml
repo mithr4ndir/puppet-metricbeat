@@ -1,5 +1,6 @@
 ---
 metricbeat::config_dir: "C:\\Program Files\\Metricbeat"
+metricbeat::config_mode: '2000770'
 metricbeat::download_url: "https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-%{lookup('metricbeat::package_ensure')}-windows-x86_64.zip"
 metricbeat::install_dir: "C:/Program Files"
 metricbeat::logging:

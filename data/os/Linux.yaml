@@ -1,5 +1,6 @@
 ---
 metricbeat::config_dir: '/etc/metricbeat'
+metricbeat::config_mode: '0640'
 metricbeat::logging:
   files:
     path: '/var/log/metricbeat'
