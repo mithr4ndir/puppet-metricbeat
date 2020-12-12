@@ -163,7 +163,7 @@ class metricbeat (
   String $package_ensure                                              = 'present',
   Integer $queue_size                                                 = 1000,
   Enum['enabled', 'disabled', 'running', 'unmanaged'] $service_ensure = 'enabled',
-  String $config_mode                                                 = '0640',
+  String $config_mode                                                 = '0600',
   Optional[Hash] $modules                                             = undef,
   Optional[Hash] $custom_modules                                      = undef,
   Optional[Boolean] $reload                                           = undef,
