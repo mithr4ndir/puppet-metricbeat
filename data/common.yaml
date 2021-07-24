@@ -1,5 +1,5 @@
 ---
-ensure: 'present'
+metricbeat::ensure: 'present'
 metricbeat::logging:
   level: 'info'
   files:
