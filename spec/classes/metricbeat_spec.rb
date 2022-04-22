@@ -12,6 +12,7 @@ describe 'metricbeat' do
 
       it { is_expected.to contain_class('metricbeat::install') }
       it { is_expected.to contain_class('metricbeat::config') }
+      it { is_expected.to contain_class('metricbeat::modules') }
       it { is_expected.to contain_class('metricbeat::repo') }
       it { is_expected.to contain_class('metricbeat::service') }
 
@@ -100,12 +101,6 @@ describe 'metricbeat' do
           end
         end
 
-        describe 'with config_mode = 9999' do
-          let(:params) { { 'config_mode' => '9999' } }
-
-          it { is_expected.to raise_error(Puppet::Error) }
-        end
-
         describe 'with major_version = 6 for new config test flag' do
           let(:params) { { 'major_version' => '6' } }
 
@@ -170,19 +165,6 @@ describe 'metricbeat' do
 
           if os_facts[:kernel] != 'windows'
             it { is_expected.to contain_package('metricbeat').with(ensure: 'absent') }
-          end
-        end
-
-        describe 'with windows package_ensure to a specific version' do
-          let(:params) { { 'package_ensure' => '6.8.3' } }
-
-          if os_facts[:kernel] == 'windows'
-            it do
-              expect(subject).to contain_archive('C:/Windows/Temp/metricbeat-6.8.3-windows-x86_64.zip').with(
-                creates: 'C:/Program Files/Metricbeat/metricbeat-6.8.3-windows-x86_64',
-                source: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.8.3-windows-x86_64.zip'
-              )
-            end
           end
         end
 

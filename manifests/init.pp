@@ -163,7 +163,7 @@ class metricbeat (
   String $package_ensure                                              = 'present',
   Integer $queue_size                                                 = 1000,
   Enum['enabled', 'disabled', 'running', 'unmanaged'] $service_ensure = 'enabled',
-  String $config_mode                                                 = '0600',
+  String $config_mode                                                 = '0644',
   Optional[Hash] $modules                                             = undef,
   Optional[Hash] $custom_modules                                      = undef,
   Optional[Boolean] $reload                                           = undef,
@@ -198,6 +198,7 @@ class metricbeat (
     Anchor['metricbeat::begin']
     -> Class['metricbeat::install']
     -> Class['metricbeat::config']
+    -> Class['metricbeat::modules']
     ~> Class['metricbeat::service']
 
     Class['metricbeat::install']
@@ -211,6 +212,7 @@ class metricbeat (
 
   anchor{'metricbeat::begin':}
   class{'metricbeat::config':}
+  class{'metricbeat::modules':}
   class{'metricbeat::install':}
   class{'metricbeat::service':}
 
