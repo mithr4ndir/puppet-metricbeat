@@ -198,7 +198,7 @@ class metricbeat (
     Anchor['metricbeat::begin']
     -> Class['metricbeat::install']
     -> Class['metricbeat::config']
-    -> Class['metricbeat::modules']
+    # -> Class['metricbeat::modules']
     ~> Class['metricbeat::service']
 
     Class['metricbeat::install']
@@ -212,7 +212,7 @@ class metricbeat (
 
   anchor{'metricbeat::begin':}
   class{'metricbeat::config':}
-  class{'metricbeat::modules':}
+  # class{'metricbeat::modules':}
   class{'metricbeat::install':}
   class{'metricbeat::service':}
 
