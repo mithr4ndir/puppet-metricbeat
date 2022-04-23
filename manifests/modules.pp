@@ -18,15 +18,20 @@ class metricbeat::modules (
         $extension = undef
       }
       if $facts['osfamily'] == 'windows'{
-        $cmd = join(['C:/Program Files', 'Metricbeat', 'metricbeat.exe'], '\\')
+        if ! defined(Exec["${status} ${module[0]}"]) {
+          exec { "${status} ${module[0]}":
+            command => "Metricbeat.exe ${status} ${module[0]}",
+            cwd     => $metricbeat::config_dir,
+            creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
+          }
+        }
       } else {
-        $cmd = $metricbeat::metricbeat_path
-      }
-      if ! defined(Exec["${status} ${module[0]}"]) {
-        exec { "${status} ${module[0]}":
-          command => "${cmd} modules ${status} ${module[0]}",
-          cwd     => $metricbeat::config_dir,
-          creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
+        if ! defined(Exec["${status} ${module[0]}"]) {
+          exec { "${status} ${module[0]}":
+            command => "${$metricbeat::metricbeat_path} modules ${status} ${module[0]}",
+            cwd     => $metricbeat::config_dir,
+            creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
+          }
         }
       }
     }
