@@ -20,7 +20,7 @@ class metricbeat::modules (
       if $facts['osfamily'] == 'windows'{
         if ! defined(Exec["${status} ${module[0]}"]) {
           exec { "${status} ${module[0]}":
-            command => "./Metricbeat.exe ${status} ${module[0]}",
+            command => "Metricbeat.exe ${status} ${module[0]}",
             cwd     => $metricbeat::config_dir,
             creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
           }
