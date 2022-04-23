@@ -18,7 +18,7 @@ class metricbeat::modules (
         $extension = undef
       }
       if $facts['osfamily'] == 'windows'{
-        $cmd = join([$cmd_install_dir, 'Metricbeat', 'metricbeat.exe'], '\\')
+        $cmd = join(["C:\\Program Files", 'Metricbeat', 'metricbeat.exe'], '\\')
       } else {
         $cmd = $metricbeat::metricbeat_path
       }
