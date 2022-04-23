@@ -24,7 +24,7 @@ class metricbeat::modules (
       }
       if ! defined(Exec["${status} ${module[0]}"]) {
         exec { "${status} ${module[0]}":
-          command => "${cmd} ${status} ${module[0]}",
+          command => "${cmd} module ${status} ${module[0]}",
           path    => $facts['path'],
           cwd     => $metricbeat::config_dir,
           creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
