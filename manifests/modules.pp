@@ -9,6 +9,11 @@ class metricbeat::modules (
   $custom_modules = $metricbeat::custom_modules
 ){
   if $modules {
+    if $facts['osfamily'] == 'windows' {
+      $cmd = 'cmd.exe /c metricbeat.exe'
+    } else {
+      $cmd = $metricbeat::metricbeat_path
+    }
     $modules.each | $module | {
       if $module[1] == 'disabled' {
         $status = 'disable'
@@ -17,21 +22,12 @@ class metricbeat::modules (
         $status = 'enable'
         $extension = undef
       }
-      if $facts['osfamily'] == 'windows'{
-        if ! defined(Exec["${status} ${module[0]}"]) {
-          exec { "${status} ${module[0]}":
-            command => "Metricbeat.exe ${status} ${module[0]}",
-            cwd     => $metricbeat::config_dir,
-            creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
-          }
-        }
-      } else {
-        if ! defined(Exec["${status} ${module[0]}"]) {
-          exec { "${status} ${module[0]}":
-            command => "${$metricbeat::metricbeat_path} modules ${status} ${module[0]}",
-            cwd     => $metricbeat::config_dir,
-            creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
-          }
+      if ! defined(Exec["${status} ${module[0]}"]) {
+        exec { "${status} ${module[0]}":
+          command => "${cmd} ${status} ${module[0]}",
+          path    => $facts['path'],
+          cwd     => $metricbeat::config_dir,
+          creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
         }
       }
     }
