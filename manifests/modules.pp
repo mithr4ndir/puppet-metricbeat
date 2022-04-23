@@ -17,9 +17,14 @@ class metricbeat::modules (
         $status = 'enable'
         $extension = undef
       }
+      if $facts['osfamily'] == 'windows'{
+        $cmd = join([$cmd_install_dir, 'Metricbeat', 'metricbeat.exe'], '\\')
+      } else {
+        $cmd = $metricbeat::metricbeat_path
+      }
       if ! defined(Exec["${status} ${module[0]}"]) {
         exec { "${status} ${module[0]}":
-          command => "${metricbeat::metricbeat_path} modules ${status} ${module[0]}",
+          command => "${cmd} modules ${status} ${module[0]}",
           cwd     => $metricbeat::config_dir,
           creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}"
         }
