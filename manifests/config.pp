@@ -5,7 +5,6 @@
 #
 # @summary Manages Metricbeat's configuration file
 class metricbeat::config {
-
   # # Use lookup to merge metricbeat::modules config from different levels of hiera
   # $modules_lookup = lookup('metricbeat::modules', undef, 'unique', undef)
   # # Check to see if anything has been confiugred in hiera
@@ -20,26 +19,26 @@ class metricbeat::config {
 
   # if fields are "under root", then remove prefix
   if $metricbeat::fields_under_root == true {
-      $fields_tmp = $metricbeat::fields.each | $key, $value | { {$key => $value} }
+    $fields_tmp = $metricbeat::fields.each | $key, $value | { { $key => $value } }
   } else {
-      $fields_tmp = $metricbeat::fields
+    $fields_tmp = $metricbeat::fields
   }
 
-  $metricbeat_config_base = delete_undef_values({
-    'cloud.id'                                 => $metricbeat::cloud_id,
-    'cloud.auth'                               => $metricbeat::cloud_auth,
-    'name'                                     => $metricbeat::beat_name,
-    'tags'                                     => $metricbeat::tags,
-    'logging'                                  => $metricbeat::logging,
-    'processors'                               => $metricbeat::processors,
-    'queue'                                    => $metricbeat::queue,
-    'setup'                                    => $metricbeat::setup,
-    'fields_under_root'                        => $metricbeat::fields_under_root,
-    'output'                                   => $metricbeat::outputs,
-    'metricbeat.autodiscover.providers'        => $metricbeat::autodiscover,
-    'metricbeat.config.modules.reload.enabled' => $metricbeat::reload,
-    'metricbeat.config.modules.path'           => "${metricbeat::config_dir}/modules.d/*.yml",
-    'monitoring'                               => $metricbeat::monitoring,
+  $metricbeat_config_base = delete_undef_values( {
+      'cloud.id'                                 => $metricbeat::cloud_id,
+      'cloud.auth'                               => $metricbeat::cloud_auth,
+      'name'                                     => $metricbeat::beat_name,
+      'tags'                                     => $metricbeat::tags,
+      'logging'                                  => $metricbeat::logging,
+      'processors'                               => $metricbeat::processors,
+      'queue'                                    => $metricbeat::queue,
+      'setup'                                    => $metricbeat::setup,
+      'fields_under_root'                        => $metricbeat::fields_under_root,
+      'output'                                   => $metricbeat::outputs,
+      'metricbeat.autodiscover.providers'        => $metricbeat::autodiscover,
+      'metricbeat.config.modules.reload.enabled' => $metricbeat::reload,
+      'metricbeat.config.modules.path'           => "${metricbeat::config_dir}/modules.d/*.yml",
+      'monitoring'                               => $metricbeat::monitoring,
   })
 
   if $fields_tmp {
@@ -51,13 +50,13 @@ class metricbeat::config {
 
   # Add the 'xpack' section if supported (version >= 6.2.0)
   if versioncmp($metricbeat::package_ensure, '6.2.0') >= 0 {
-    $metricbeat_config = deep_merge($metricbeat_config_temp, {'xpack' => $metricbeat::xpack})
+    $metricbeat_config = deep_merge($metricbeat_config_temp, { 'xpack' => $metricbeat::xpack })
   }
   else {
     $metricbeat_config = $metricbeat_config_temp
   }
 
-  case $::kernel {
+  case $facts['kernel'] {
     'Linux': {
       $q = undef
       $slash = '/'
@@ -69,7 +68,7 @@ class metricbeat::config {
       $slash = "\\"
     }
     default: {
-      fail("${::kernel} is not supported by metricbeat.")
+      fail("${facts['kernel']} is not supported by metricbeat.")
     }
   }
 
@@ -78,7 +77,7 @@ class metricbeat::config {
     default => "${q}${metricbeat::metricbeat_path}${q} -c ${q}${metricbeat::config_dir}${slash}metricbeat.yml${q} test config",
   }
 
-  file{'metricbeat.yml':
+  file { 'metricbeat.yml':
     ensure       => $metricbeat::ensure,
     path         => "${metricbeat::config_dir}/metricbeat.yml",
     owner        => $metricbeat::owner,
@@ -87,5 +86,4 @@ class metricbeat::config {
     content      => inline_template('<%= @metricbeat_config.to_yaml() %>'),
     validate_cmd => $validate_cmd,
   }
-
 }

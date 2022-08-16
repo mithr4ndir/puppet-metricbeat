@@ -12,28 +12,27 @@ describe 'metricbeat' do
 
       it { is_expected.to contain_class('metricbeat::install') }
       it { is_expected.to contain_class('metricbeat::config') }
-      it { is_expected.to contain_class('metricbeat::modules') }
       it { is_expected.to contain_class('metricbeat::repo') }
       it { is_expected.to contain_class('metricbeat::service') }
 
       describe 'metricbeat::config' do
         if os_facts[:kernel] == 'windows'
           it do
-            expect(subject).to contain_file('metricbeat.yml').with(
+            is_expected.to contain_file('metricbeat.yml').with(
               ensure: 'present',
-              path: 'C:\\Program Files\\Metricbeat/metricbeat.yml'
+              path: 'C:\\Program Files\\Metricbeat/metricbeat.yml',
             )
           end
         else
           it do
-            expect(subject).to contain_file('metricbeat.yml').with(
+            is_expected.to contain_file('metricbeat.yml').with(
               ensure: 'present',
               owner: 'root',
               group: 'root',
               mode: '0644',
               path: '/etc/metricbeat/metricbeat.yml',
-              content: %r{name: myhost},
-              validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config'
+              content: %r{name: foo},
+              validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config',
             )
           end
         end
@@ -43,17 +42,17 @@ describe 'metricbeat' do
 
           if os_facts[:kernel] == 'windows'
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'absent',
-                path: 'C:\\Program Files\\Metricbeat/metricbeat.yml'
+                path: 'C:\\Program Files\\Metricbeat/metricbeat.yml',
               )
             end
           else
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'absent',
                 path: '/etc/metricbeat/metricbeat.yml',
-                validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config'
+                validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config',
               )
             end
           end
@@ -64,21 +63,21 @@ describe 'metricbeat' do
 
           if os_facts[:kernel] == 'windows'
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'present',
                 path: 'C:\\Program Files\\Metricbeat/metricbeat.yml',
-                validate_cmd: nil
+                validate_cmd: nil,
               )
             end
           else
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'present',
                 owner: 'root',
                 group: 'root',
                 mode: '0644',
                 path: '/etc/metricbeat/metricbeat.yml',
-                validate_cmd: nil
+                validate_cmd: nil,
               )
             end
           end
@@ -89,13 +88,13 @@ describe 'metricbeat' do
 
           if os_facts[:kernel] != 'windows'
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'present',
                 owner: 'root',
                 group: 'root',
                 mode: '0600',
                 path: '/etc/metricbeat/metricbeat.yml',
-                validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config'
+                validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config',
               )
             end
           end
@@ -106,20 +105,20 @@ describe 'metricbeat' do
 
           if os_facts[:kernel] == 'windows'
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'present',
-                path: 'C:\\Program Files\\Metricbeat/metricbeat.yml'
+                path: 'C:\\Program Files\\Metricbeat/metricbeat.yml',
               )
             end
           else
             it do
-              expect(subject).to contain_file('metricbeat.yml').with(
+              is_expected.to contain_file('metricbeat.yml').with(
                 ensure: 'present',
                 owner: 'root',
                 group: 'root',
                 mode: '0644',
                 path: '/etc/metricbeat/metricbeat.yml',
-                validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config'
+                validate_cmd: '/usr/share/metricbeat/bin/metricbeat -c /etc/metricbeat/metricbeat.yml test config',
               )
             end
           end
@@ -129,31 +128,31 @@ describe 'metricbeat' do
       describe 'metricbeat::install' do
         if os_facts[:kernel] == 'windows'
           it do
-            expect(subject).to contain_archive('C:/Windows/Temp/metricbeat-7.9.3-windows-x86_64.zip').with(
+            is_expected.to contain_archive('C:/Windows/Temp/metricbeat-7.9.3-windows-x86_64.zip').with(
               creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
-              source: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.9.3-windows-x86_64.zip'
+              source: 'https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.9.3-windows-x86_64.zip',
             )
-            expect(subject).to contain_exec('unzip metricbeat-7.9.3-windows-x86_64').with(
+            is_expected.to contain_exec('unzip metricbeat-7.9.3-windows-x86_64').with(
               command: "\$sh=New-Object -COM Shell.Application;\$sh.namespace((Convert-Path 'C:/Program Files')).Copyhere(\$sh.namespace((Convert-Path 'C:/Windows/Temp/metricbeat-7.9.3-windows-x86_64.zip')).items(), 16)", # rubocop:disable Layout/LineLength
-              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64'
+              creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
             )
-            expect(subject).to contain_exec('stop service metricbeat-7.9.3-windows-x86_64').with(
+            is_expected.to contain_exec('stop service metricbeat-7.9.3-windows-x86_64').with(
               creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
               command: 'Set-Service -Name metricbeat -Status Stopped',
-              onlyif: 'if(Get-WmiObject -Class Win32_Service -Filter "Name=\'metricbeat\'") {exit 0} else {exit 1}'
+              onlyif: 'if(Get-WmiObject -Class Win32_Service -Filter "Name=\'metricbeat\'") {exit 0} else {exit 1}',
             )
-            expect(subject).to contain_exec('rename metricbeat-7.9.3-windows-x86_64').with(
+            is_expected.to contain_exec('rename metricbeat-7.9.3-windows-x86_64').with(
               creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
-              command: "Remove-Item 'C:/Program Files/Metricbeat' -Recurse -Force -ErrorAction SilentlyContinue;Rename-Item 'C:/Program Files/metricbeat-7.9.3-windows-x86_64' 'C:/Program Files/Metricbeat'" # rubocop:disable Layout/LineLength
+              command: "Remove-Item 'C:/Program Files/Metricbeat' -Recurse -Force -ErrorAction SilentlyContinue;Rename-Item 'C:/Program Files/metricbeat-7.9.3-windows-x86_64' 'C:/Program Files/Metricbeat'", # rubocop:disable Layout/LineLength
             )
-            expect(subject).to contain_exec('mark metricbeat-7.9.3-windows-x86_64').with(
+            is_expected.to contain_exec('mark metricbeat-7.9.3-windows-x86_64').with(
               creates: 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64',
-              command: "New-Item 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64' -ItemType file"
+              command: "New-Item 'C:/Program Files/Metricbeat/metricbeat-7.9.3-windows-x86_64' -ItemType file",
             )
-            expect(subject).to contain_exec('install metricbeat-7.9.3-windows-x86_64').with(
+            is_expected.to contain_exec('install metricbeat-7.9.3-windows-x86_64').with(
               command: './install-service-metricbeat.ps1',
               cwd: 'C:/Program Files/Metricbeat',
-              refreshonly: true
+              refreshonly: true,
             )
           end
         else
@@ -187,9 +186,9 @@ describe 'metricbeat' do
 
       describe 'metricbeat::service' do
         it do
-          expect(subject).to contain_service('metricbeat').with(
+          is_expected.to contain_service('metricbeat').with(
             ensure: 'running',
-            enable: true
+            enable: true,
           )
         end
 
@@ -197,9 +196,9 @@ describe 'metricbeat' do
           let(:params) { { 'ensure' => 'absent' } }
 
           it do
-            expect(subject).to contain_service('metricbeat').with(
+            is_expected.to contain_service('metricbeat').with(
               ensure: 'stopped',
-              enable: false
+              enable: false,
             )
           end
         end
@@ -208,9 +207,9 @@ describe 'metricbeat' do
           let(:params) { { 'service_ensure' => 'disabled' } }
 
           it do
-            expect(subject).to contain_service('metricbeat').with(
+            is_expected.to contain_service('metricbeat').with(
               ensure: 'stopped',
-              enable: false
+              enable: false,
             )
           end
         end
@@ -219,9 +218,9 @@ describe 'metricbeat' do
           let(:params) { { 'service_ensure' => 'running' } }
 
           it do
-            expect(subject).to contain_service('metricbeat').with(
+            is_expected.to contain_service('metricbeat').with(
               ensure: 'running',
-              enable: false
+              enable: false,
             )
           end
         end
@@ -230,9 +229,9 @@ describe 'metricbeat' do
           let(:params) { { 'service_ensure' => 'unmanaged' } }
 
           it do
-            expect(subject).to contain_service('metricbeat').with(
+            is_expected.to contain_service('metricbeat').with(
               ensure: nil,
-              enable: false
+              enable: false,
             )
           end
         end
@@ -248,8 +247,8 @@ describe 'metricbeat' do
         it { is_expected.to compile }
 
         it {
-          expect(subject).to contain_file('metricbeat.yml').with(
-            content: %r{output:\n\s{2}elasticsearch:\n\s{4}hosts:\n\s{4}- http://localhost:9200}
+          is_expected.to contain_file('metricbeat.yml').with(
+            content: %r{output:\n\s{2}elasticsearch:\n\s{4}hosts:\n\s{4}- http://localhost:9200},
           )
         }
 
@@ -310,8 +309,8 @@ describe 'metricbeat' do
         end
 
         it {
-          expect(subject).to contain_file('metricbeat.yml').with(
-            content: %r{processors:\n- add_cloud_metadata:\n\s{4}timeout: 3s\n- drop_fields:\n\s{4}fields:\n\s{4}- field1\n\s{4}- field2}
+          is_expected.to contain_file('metricbeat.yml').with(
+            content: %r{processors:\n- add_cloud_metadata:\n\s{4}timeout: 3s\n- drop_fields:\n\s{4}fields:\n\s{4}- field1\n\s{4}- field2},
           )
         }
       end

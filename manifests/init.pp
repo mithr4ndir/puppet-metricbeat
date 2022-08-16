@@ -154,8 +154,8 @@ class metricbeat (
   String $metricbeat_path,
   Hash $queue,
   String $tmp_dir,
-  Hash $outputs                                                       = {'elasticsearch' => {'hosts' => ['http://localhost:9200']}},
-  String $beat_name                                                   = $facts['hostname'],
+  Hash $outputs                                                       = { 'elasticsearch' => { 'hosts' => ['http://localhost:9200'] } },
+  String $beat_name                                                   = $facts['networking']['hostname'],
   Boolean $disable_configtest                                         = false,
   Enum['present', 'absent'] $ensure                                   = 'present',
   Enum['6', '7'] $major_version                                       = '7',
@@ -186,9 +186,8 @@ class metricbeat (
   Optional[Hash] $xpack                                               = undef,
   Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $yum_repo_url  = undef,
 ) {
-
   if $manage_repo {
-    class{'metricbeat::repo':}
+    class { 'metricbeat::repo': }
 
     Class['metricbeat::repo']
     -> Class['metricbeat::install']
@@ -210,10 +209,9 @@ class metricbeat (
     -> Class['metricbeat::install']
   }
 
-  anchor{'metricbeat::begin':}
-  class{'metricbeat::config':}
+  anchor { 'metricbeat::begin': }
+  class { 'metricbeat::config': }
   # class{'metricbeat::modules':}
-  class{'metricbeat::install':}
-  class{'metricbeat::service':}
-
+  class { 'metricbeat::install': }
+  class { 'metricbeat::service': }
 }

@@ -18,12 +18,12 @@ class metricbeat::repo {
     default => $metricbeat::yum_repo_url,
   }
 
-  case $facts['osfamily'] {
+  case $facts['os']['family'] {
     'Debian': {
-      include ::apt
+      include apt
 
       if !defined(Apt::Source['beats']) {
-        apt::source{'beats':
+        apt::source { 'beats':
           location => $apt_repo_url,
           release  => 'stable',
           repos    => 'main',
@@ -37,7 +37,7 @@ class metricbeat::repo {
     }
     'RedHat': {
       if !defined(Yumrepo['beats']) {
-        yumrepo{'beats':
+        yumrepo { 'beats':
           descr    => "Elastic repository for ${metricbeat::major_version}.x packages",
           baseurl  => $yum_repo_url,
           gpgcheck => 1,

@@ -5,7 +5,7 @@
 #
 # @summary Manages the state of Service['metricbeat']
 class metricbeat::service (
-  $service_ensure         = $metricbeat::service_ensure,
+  String $service_ensure         = $metricbeat::service_ensure,
 ) {
   # The base class must be included first because parameter defaults depend on it
   if ! defined(Class['metricbeat']) {
@@ -40,7 +40,7 @@ class metricbeat::service (
     $enable = false
   }
 
-  service{'metricbeat':
+  service { 'metricbeat':
     ensure => $ensure,
     enable => $enable,
   }
