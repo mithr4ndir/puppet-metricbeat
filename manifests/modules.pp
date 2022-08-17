@@ -29,7 +29,7 @@ define metricbeat::modules (
           path    => $facts['path'],
           cwd     => $metricbeat::config_dir,
           creates => "${metricbeat::config_dir}/modules.d/${module[0]}.yml${extension}",
-          notify  => Class['Metricbeat::Service']
+          notify  => Class['Metricbeat::Service'],
         }
       }
     }
@@ -38,7 +38,7 @@ define metricbeat::modules (
     $custom_modules.each | $custom | {
       # ensure period is defined for entry entry as it is required.
       $config = $custom[1].map | $h | { $h['period'] }
-      $conf2 = ($config.filter |$x| {$x != undef}).length
+      $conf2 = ($config.filter |$x| { $x != undef }).length
       $value1 = $config.length
       if $value1 != $conf2 {
         fail('You must include the period to collect metricsets')

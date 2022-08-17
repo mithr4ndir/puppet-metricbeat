@@ -100,8 +100,8 @@ describe 'metricbeat' do
           end
         end
 
-        describe 'with major_version = 6 for new config test flag' do
-          let(:params) { { 'major_version' => '6' } }
+        describe 'with major_version = 7 for new config test flag' do
+          let(:params) { { 'major_version' => '7' } }
 
           if os_facts[:kernel] == 'windows'
             it do

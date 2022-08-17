@@ -19,5 +19,4 @@ define metricbeat::custom_modules (
       content => inline_template('<%= @custom[1].to_yaml() %>'),
     }
   }
-
 }

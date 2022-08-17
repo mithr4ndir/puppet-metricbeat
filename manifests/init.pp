@@ -21,7 +21,7 @@
 # Parameters
 # ----------
 #
-# * `apt_repo_url`
+# @param `apt_repo_url`
 # [String] The URL of the APT repository to install Metricbeat from. Only
 # applicable on Debian systems. Default: https://artifacts.elastic.co/packages/${metricbeat::major_version}.x/apt
 #
@@ -47,7 +47,7 @@
 # [String] The name of the beat which is published as the `beat.name`
 # field of each transaction. (default: $facts['hostname'])
 #
-# * `config_dir`
+# @param config_d
 # [String] The absolute path to the configuration folder location. (default:
 # /etc/metricbeat on Linux, C:/Program Files/Metricbeat on Windows)
 #
@@ -87,7 +87,7 @@
 #
 # * `major_version`
 # [Enum] The major version of Metricbeat to install from vendor repositories.
-# Valid values are '5', '6' and '7'. (default: '5')
+# Valid values are '7' and '8'. (default: '7')
 #
 # * `manage_repo`
 # [Boolean] Weather the upstream (elastic) repository should be
@@ -158,7 +158,7 @@ class metricbeat (
   String $beat_name                                                   = $facts['networking']['hostname'],
   Boolean $disable_configtest                                         = false,
   Enum['present', 'absent'] $ensure                                   = 'present',
-  Enum['6', '7'] $major_version                                       = '7',
+  Enum['7', '8'] $major_version                                       = '7',
   Boolean $manage_repo                                                = true,
   String $package_ensure                                              = 'present',
   Integer $queue_size                                                 = 1000,
