@@ -28,7 +28,7 @@ class metricbeat::install inherits metricbeat {
       creates      => $version_file,
       proxy_server => $metricbeat::proxy_address,
     }
-    if $facts['powershell_version'] =~ 5 {
+    if $facts['powershell_version'] > 5 {
       $unzip_command = "Expand-Archive ${zip_file} \"${metricbeat::install_dir}\""
     }
     else {
