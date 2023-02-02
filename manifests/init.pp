@@ -1,9 +1,6 @@
-# metricbeat
-#
-# This class installs the Elastic metricbeat statistic and metric
-# collector and manages the configuration on the include nodes.
-#
 # @summary Install, configures and manages Metricbeat on the target node.
+#
+# A description of what this class does
 #
 # @example
 #  class{'metricbeat':
@@ -24,7 +21,7 @@
 # Parameters
 # ----------
 #
-# * `apt_repo_url`
+# @param `apt_repo_url`
 # [String] The URL of the APT repository to install Metricbeat from. Only
 # applicable on Debian systems. Default: https://artifacts.elastic.co/packages/${metricbeat::major_version}.x/apt
 #
@@ -40,7 +37,7 @@
 #
 # * `modules`
 # Array[Hash] The array of modules this instance of metricbeat will
-# collect. (default: [{}])
+# enable/configure. (default: [{}])
 #
 # * `outputs`
 # [Hash] Configures the output(s) this Metricbeat instance should send
@@ -48,9 +45,9 @@
 #
 # * `beat_name`
 # [String] The name of the beat which is published as the `beat.name`
-# field of each transaction. (default: $::hostname)
+# field of each transaction. (default: $facts['hostname'])
 #
-# * `config_dir`
+# @param config_d
 # [String] The absolute path to the configuration folder location. (default:
 # /etc/metricbeat on Linux, C:/Program Files/Metricbeat on Windows)
 #
@@ -90,11 +87,15 @@
 #
 # * `major_version`
 # [Enum] The major version of Metricbeat to install from vendor repositories.
-# Valid values are '5', '6' and '7'. (default: '5')
+# Valid values are '7' and '8'. (default: '7')
 #
 # * `manage_repo`
 # [Boolean] Weather the upstream (elastic) repository should be
 # configured. (default: true)
+#
+# * 'modules'
+# [Hash] Array of modules and whether or not they should be enabled or disabled.
+# (default: undef)
 #
 # * `package_ensure`
 # [String] The desired state of Package['metricbeat']. Only valid when
@@ -125,15 +126,6 @@
 # $ensure is present. Valid values are 'enabled', 'disabled', 'running'
 # or 'unmanaged'. (default: 'enabled')
 #
-# * `service_has_restart`
-# [Boolean] When true use the restart function of the init script.
-# When false the init script's stop and start functions will be used.
-# (default: true)
-#
-# * `service_provider`
-# Optional[String] The optional service provider of the node. (default:
-# 'redhat' on RedHat nodes, undef otherwise)
-#
 # * `tags`
 # Optional[Array[String]] An optional list of values to include in the
 # `tag` field of each published transaction. This is useful for
@@ -154,49 +146,48 @@
 #
 # * `yum_repo_url`
 # [String] The URL of the YUM repo to install Metricbeat from. Only
-# applicable on RedHat or Suse based systems. 
+# applicable on RedHat or Suse based systems.
 # Default: https://artifacts.elastic.co/packages/${metricbeat::major_version}.x/yum
-class metricbeat(
-  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $apt_repo_url  = $metricbeat::params::apt_repo_url,
-  Optional[String] $cloud_id                                          = $metricbeat::params::cloud_id,
-  Optional[String] $cloud_auth                                        = $metricbeat::params::cloud_auth,
-  Array[Hash] $modules                                                = $metricbeat::params::modules,
-  Array[String] $module_templates                                     = $metricbeat::params::module_templates,
-  Hash $outputs                                                       = $metricbeat::params::outputs,
-  String $beat_name                                                   = $metricbeat::params::beat_name,
-  String $config_dir                                                  = $metricbeat::params::config_dir,
-  Pattern[/^0[0-7]{3}$/] $config_mode                                 = $metricbeat::params::config_mode,
-  Boolean $disable_configtest                                         = $metricbeat::params::disable_configtest,
-  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $download_url  = $metricbeat::params::download_url,
-  Enum['present', 'absent'] $ensure                                   = $metricbeat::params::ensure,
-  Optional[Hash] $fields                                              = $metricbeat::params::fields,
-  Boolean $fields_under_root                                          = $metricbeat::params::fields_under_root,
-  Optional[String] $install_dir                                       = $metricbeat::params::install_dir,
-  Hash $logging                                                       = $metricbeat::params::logging,
-  Enum['5', '6', '7'] $major_version                                  = $metricbeat::params::major_version,
-  Boolean $manage_repo                                                = $metricbeat::params::manage_repo,
-  String $package_ensure                                              = $metricbeat::params::package_ensure,
-  Optional[Array[Hash]] $processors                                   = $metricbeat::params::processors,
-  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $proxy_address = $metricbeat::params::proxy_address,
-  Hash $queue                                                         = $metricbeat::params::queue,
-  Integer $queue_size                                                 = $metricbeat::params::queue_size,
-  Enum['enabled', 'disabled', 'running', 'unmanaged'] $service_ensure = $metricbeat::params::service_ensure,
-  Boolean $service_has_restart                                        = $metricbeat::params::service_has_restart,
-  Optional[String] $service_provider                                  = $metricbeat::params::service_provider,
-  Optional[Array[String]] $tags                                       = $metricbeat::params::tags,
-  String $tmp_dir                                                     = $metricbeat::params::tmp_dir,
-  Optional[String] $url_arch                                          = $metricbeat::params::url_arch,
-  Optional[Hash] $xpack                                               = $metricbeat::params::xpack,
-  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $yum_repo_url  = $metricbeat::params::yum_repo_url,
-) inherits metricbeat::params {
-
-  $real_download_url = $download_url ? {
-    undef   => "https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-${package_ensure}-windows-${metricbeat::params::url_arch}.zip",
-    default => $download_url,
-  }
-
+class metricbeat (
+  String $config_dir,
+  Hash $logging,
+  String $metricbeat_path,
+  Hash $queue,
+  String $tmp_dir,
+  Hash $outputs                                                       = { 'elasticsearch' => { 'hosts' => ['http://localhost:9200'] } },
+  String $beat_name                                                   = $facts['networking']['hostname'],
+  Boolean $disable_configtest                                         = false,
+  Enum['present', 'absent'] $ensure                                   = 'present',
+  Enum['7', '8'] $major_version                                       = '7',
+  Boolean $manage_repo                                                = true,
+  String $package_ensure                                              = 'present',
+  Integer $queue_size                                                 = 1000,
+  Enum['enabled', 'disabled', 'running', 'unmanaged'] $service_ensure = 'enabled',
+  String $config_mode                                                 = '0644',
+  Optional[Hash] $modules                                             = undef,
+  Optional[Hash] $custom_modules                                      = undef,
+  Optional[Boolean] $reload                                           = undef,
+  Optional[Array[Hash]] $autodiscover                                 = undef,
+  Optional[Array[Hash]] $setup                                        = undef,
+  Optional[Array[Hash]] $monitoring                                   = undef,
+  Optional[Array[String]] $tags                                       = undef,
+  Optional[Array[Hash]] $processors                                   = undef,
+  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $proxy_address = undef,
+  Optional[String] $install_dir                                       = undef,
+  Optional[Hash] $fields                                              = undef,
+  Optional[Boolean] $fields_under_root                                = undef,
+  Optional[String] $owner                                             = undef,
+  Optional[String] $group                                             = undef,
+  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $download_url  = undef,
+  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $apt_repo_url  = undef,
+  Optional[String] $cloud_id                                          = undef,
+  Optional[String] $cloud_auth                                        = undef,
+  Optional[String] $url_arch                                          = undef,
+  Optional[Hash] $xpack                                               = undef,
+  Optional[Variant[Stdlib::HTTPUrl, Stdlib::HTTPSUrl]] $yum_repo_url  = undef,
+) {
   if $manage_repo {
-    class{'metricbeat::repo':}
+    class { 'metricbeat::repo': }
 
     Class['metricbeat::repo']
     -> Class['metricbeat::install']
@@ -206,6 +197,7 @@ class metricbeat(
     Anchor['metricbeat::begin']
     -> Class['metricbeat::install']
     -> Class['metricbeat::config']
+    # -> Class['metricbeat::modules']
     ~> Class['metricbeat::service']
 
     Class['metricbeat::install']
@@ -217,8 +209,9 @@ class metricbeat(
     -> Class['metricbeat::install']
   }
 
-  anchor{'metricbeat::begin':}
-  class{'metricbeat::config':}
-  class{'metricbeat::install':}
-  class{'metricbeat::service':}
+  anchor { 'metricbeat::begin': }
+  class { 'metricbeat::config': }
+  # class{'metricbeat::modules':}
+  class { 'metricbeat::install': }
+  class { 'metricbeat::service': }
 }
