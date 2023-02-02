@@ -23,7 +23,7 @@ class metricbeat::install inherits metricbeat {
     }
 
     archive { $zip_file:
-      source       => $metricbeat::real_download_url,
+      source       => $metricbeat::download_url,
       cleanup      => false,
       creates      => $version_file,
       proxy_server => $metricbeat::proxy_address,
