@@ -1,0 +1,34 @@
+{
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "description": "Manage Metricbeat modules",
+  "parameters": {
+    "status": {
+      "description": "What action are you taking on the modules?",
+      "type": "Optional[Enum[enable, disable, list]]",
+      "default": "list"
+    },
+    "module": {
+      "description": "The module to take action on",
+      "type": "Optional[String[1]]"
+    },
+    "config_file": {
+      "description": "Path to non-standard config file",
+      "type": "Optional[String]"
+    }
+  },
+  "implementations": [
+    {
+      "name": "module_linux.sh",
+      "requirements": [
+        "shell"
+      ]
+    },
+    {
+      "name": "module_windows.ps1",
+      "requirements": [
+        "powershell"
+      ]
+    }
+  ]
+}

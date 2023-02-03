@@ -1,0 +1,6 @@
+{
+  "puppet_task_version": 1,
+  "name": "Metricbeat Modules",
+  "description": "Manage Metricbeat modules on linux",
+  "private": true
+}
